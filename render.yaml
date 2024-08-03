@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: my-web-service
-    env: docker
-    dockerfilePath: Dockerfile
-    buildCommand: |
-      # Any custom build commands if needed
-    startCommand: gunicorn myapp.wsgi:application
