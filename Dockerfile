@@ -10,6 +10,9 @@ RUN apt-get update && apt-get install -y \
     liblapacke-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Install dlib separately to ensure it builds correctly
+RUN pip install dlib
+
 # Set the working directory
 WORKDIR /app
 
