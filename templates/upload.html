@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISTFC - Upload</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .hero-section {
+            text-align: center;
+            margin: 50px 0;
+        }
+        .hero-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .hero-section p {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 30px;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .instructions {
+            margin-top: 20px;
+        }
+        .instructions h4 {
+            margin-bottom: 10px;
+        }
+        .instructions p {
+            margin-bottom: 5px;
+        }
+        .custom-file-input:lang(en) ~ .custom-file-label::after {
+            content: "Browse";
+        }
+        .custom-file-label::after {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: .375rem .75rem;
+            border-radius: .25rem;
+            margin-left: .5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">ISTFC</a>
+    </nav>
+
+    <div class="hero-section">
+        <h3>Just back from a trip and need to sort through all those photos? 📸</h3>
+        <p>Friends asking for their pics and it's a hassle to find them? Don’t stress — ISTFC is here to make photo segregation a breeze! 🚀</p>
+    </div>
+
+    <div class="container">
+        <h2 class="text-center">Upload a Folder</h2>
+        <form action="{{ url_for('upload_files') }}" method="post" enctype="multipart/form-data" class="mt-4">
+            <div class="form-group">
+                <label for="files">Choose folder</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="files" name="files" webkitdirectory multiple>
+                    <label class="custom-file-label" for="files"><i class="fas fa-folder-open"></i></label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Upload</button>
+        </form>
+        <div class="instructions">
+            <h4>Instructions:</h4>
+            <p>1. You can upload all the images in a folder.</p>
+            <p>2. After successful upload, you will receive a URL. Anyone with this URL can access the uploaded images.</p>
+            <p>3. You can use your photo to find all the images that include you.</p>
+            <p>4. All the images that pop up can be downloaded with a single click.</p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#files').on('change', function() {
+                var fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').addClass('selected').html(fileName);
+            });
+        });
+    </script>
+</body>
+</html>

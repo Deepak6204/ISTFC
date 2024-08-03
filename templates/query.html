@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Image</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+        #video {
+            border: 2px solid #007bff;
+            border-radius: 5px;
+        }
+        .guide-text {
+            margin-top: 20px;
+        }
+        .btn-custom {
+            width: 100%;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        #capture-notice {
+            display: none;
+            margin-top: 20px;
+        }
+        #captured-preview {
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Query an Image</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <video id="video" width="100%" height="400" autoplay></video>
+                <img id="captured-preview" alt="Captured Image Preview">
+                <div class="guide-text text-center text-muted">
+                    <p>Please ensure your face is well-lit and avoid any shadows or obstacles in the background.</p>
+                </div>
+                <button id="snap" class="btn btn-primary btn-custom">Capture Image</button>
+                <div id="capture-notice" class="alert alert-info">
+                    <p>Image captured successfully!</p>
+                </div>
+                <button id="retake" class="btn btn-warning btn-custom" style="display: none;">Retake Image</button>
+                <canvas id="canvas" style="display:none;"></canvas>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <form id="image-form" method="post">
+                    <input type="hidden" id="captured-image" name="image">
+                    <button type="submit" class="btn btn-success btn-custom" style="display: none;" id="query-button">Query</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const snap = document.getElementById('snap');
+            const retake = document.getElementById('retake');
+            const form = document.getElementById('image-form');
+            const capturedImageInput = document.getElementById('captured-image');
+            const capturedPreview = document.getElementById('captured-preview');
+            const captureNotice = document.getElementById('capture-notice');
+            const queryButton = document.getElementById('query-button');
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("Error accessing webcam: ", err);
+                });
+
+            snap.addEventListener('click', () => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+                const dataURL = canvas.toDataURL('image/png');
+                capturedImageInput.value = dataURL;
+                capturedPreview.src = dataURL;
+                capturedPreview.width = video.videoWidth;
+                capturedPreview.height = video.videoHeight;
+                capturedPreview.style.display = 'block';
+                video.style.display = 'none';
+                snap.style.display = 'none';
+                retake.style.display = 'block';
+                captureNotice.style.display = 'block';
+                queryButton.style.display = 'block';
+            });
+
+            retake.addEventListener('click', () => {
+                video.style.display = 'block';
+                capturedPreview.style.display = 'none';
+                snap.style.display = 'block';
+                retake.style.display = 'none';
+                captureNotice.style.display = 'none';
+                queryButton.style.display = 'none';
+                capturedImageInput.value = '';
+            });
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const imageData = capturedImageInput.value;
+                console.log(imageData);
+
+                if (imageData) {
+                    $.ajax({
+                        url: "{{ url_for('compare_faces', user_id = user_id) }}",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({ image: imageData }),
+                        success: function(response) {
+                            $('body').html(response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error: ", error);
+                        }
+                    });
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
