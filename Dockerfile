@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     libboost-all-dev \
+    libatlas-base-dev \
+    liblapacke-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
